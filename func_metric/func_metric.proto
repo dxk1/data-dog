@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package func_metric;
+option go_package = "../func_metric";
+
+service FuncMetricReport {
+    rpc InvokeMetricReport(InvokeMetricRequest) returns (Reply) {}
+}
+
+message InvokeMetricRequest {
+    string request_id = 1;
+    string app_id = 2;
+    string function_id = 3;
+    string namespace = 4;
+    string function_name = 5;
+    string qualifier = 6;
+
+}
+
+message Reply {
+    string code    = 1;
+    string message = 2;
+}

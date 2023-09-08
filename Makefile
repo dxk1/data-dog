@@ -5,20 +5,21 @@ gitversion=$(selfVer)-$(commit)-$(date)
 goversion=$(shell go version | awk '{print $$3}')
 version=$(gitversion)-$(goversion)
 
-NAMESPACE=data
+NAMESPACE=mds
 COMMIT=$(shell git rev-parse --short HEAD)
 DATE:=$(shell date +'%Y%m%d-%H%M%S')
 QCI_ENV_FILE?=release-tag
-IMG-RegionInvoke=data_dog
-OBJ-RegionInvoke=DataDog
+IMG-DataDog=data_dog
+OBJ-DataDog=DataDog
+BIN-DataDog=bin
 
 TAG ?= release-init-$(DATE)-$(COMMIT)
 
 build:
-	GOARCH=amd64 GOOS=linux go build -ldflags "-X main.Version=$(version)" -mod=vendor -o $(OBJ-DataDog)/$(OBJ-DataDog) main.go
+	GOARCH=amd64 GOOS=linux go build -ldflags "-X main.Version=$(version)" -mod=vendor -o $(BIN-DataDog)/$(OBJ-DataDog) main.go
 
 build-image:build
-	mv $(OBJ-DataDog)/$(OBJ-DataDog) docker/
+	mv $(BIN-DataDog)/$(OBJ-DataDog) docker/
 	cd docker; docker build --rm --no-cache -t csighub.tencentyun.com/$(NAMESPACE)/$(IMG-DataDog):$(TAG) .
 
 push-image:build-image
