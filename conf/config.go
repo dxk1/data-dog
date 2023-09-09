@@ -6,11 +6,11 @@
 package conf
 
 import (
+	"data-dog/log"
 	"fmt"
 	"git.code.oa.com/tencentcloud-serverless/scf_common/hotswap"
 	"gopkg.in/yaml.v3"
 	"os"
-	scflog "scf-log"
 	"sync"
 )
 
@@ -65,7 +65,7 @@ func preHandle(config *Config) *Config {
 	}
 
 	out, _ := yaml.Marshal(config)
-	scflog.Infof("load conf:%s", string(out))
+	log.Log.Info().Msgf("load conf:%s", string(out))
 	return config
 }
 

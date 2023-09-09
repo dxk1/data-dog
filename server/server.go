@@ -48,6 +48,12 @@ func (s *Server) Run() error {
 }
 
 func (s *Server) InvokeMetricReport(ctx context.Context, request *pb.InvokeMetricRequest) (*pb.Reply, error) {
+	logEvent := log.Log.Error()
+	for k, v := range request.CustomFields {
+		logEvent.Str(k, v)
+	}
+	//输出日志
+	logEvent.Send()
 	return &pb.Reply{
 		Code: 200,
 	}, nil
