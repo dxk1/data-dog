@@ -58,3 +58,11 @@ func (s *Server) InvokeMetricReport(ctx context.Context, request *pb.InvokeMetri
 		Code: 200,
 	}, nil
 }
+
+func (s *Server) ReportLocalMetric(ctx context.Context, request *pb.LocalMetricRequest) (*pb.Reply, error) {
+	//输出日志
+	log.Log.Error().Msgf("ip:%s report metric:%s", request.LocalIp, request.SecondOverMetric)
+	return &pb.Reply{
+		Code: 200,
+	}, nil
+}

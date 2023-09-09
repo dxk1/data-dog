@@ -7,21 +7,49 @@ package sdk
 
 import (
 	"context"
+	"data-dog/log"
 	"data-dog/pb"
+	"data-dog/sdk/api"
 	"git.code.oa.com/tencentcloud-serverless/scf_common/polarissdk"
+	"time"
 )
 
 type ReportClient struct {
 	ServiceConfig *ServiceConfig
+	Stop          chan struct{}
+
+	LocalIp string
 }
 
-func Init(config *ServiceConfig) *ReportClient {
+func Init(config *ServiceConfig, localIp string) *ReportClient {
 	return &ReportClient{
 		ServiceConfig: config,
+		LocalIp:       localIp,
 	}
 }
 
-func (r *ReportClient) ReportInvokeMetric(ctx context.Context, files map[string]string) error {
+func (r *ReportClient) ReportInvokeMetric(ctx context.Context, funId, t string, files map[string]string) error {
+	if api.CountingPass(funId, r.ServiceConfig.SwitchConfig) {
+		initReq := &polarissdk.GetOneInstanceRequest{}
+		initReq.Namespace = r.ServiceConfig.Namespace
+		initReq.Service = r.ServiceConfig.Service
+		conn, err := polarissdk.GetGrpcConn(initReq)
+		if err != nil {
+			return err
+		}
+
+		c := pb.NewFuncMetricReportClient(conn.Conn.Value())
+		_, err = c.InvokeMetricReport(ctx, &pb.InvokeMetricRequest{
+			CustomFields: files,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (r *ReportClient) ReportLocalMetric(ctx context.Context, metric string) error {
 	initReq := &polarissdk.GetOneInstanceRequest{}
 	initReq.Namespace = r.ServiceConfig.Namespace
 	initReq.Service = r.ServiceConfig.Service
@@ -31,26 +59,33 @@ func (r *ReportClient) ReportInvokeMetric(ctx context.Context, files map[string]
 	}
 
 	c := pb.NewFuncMetricReportClient(conn.Conn.Value())
-	_, err = c.InvokeMetricReport(ctx, &pb.InvokeMetricRequest{
-		CustomFields: files,
+	_, err = c.ReportLocalMetric(ctx, &pb.LocalMetricRequest{
+		LocalIp:          r.LocalIp,
+		SecondOverMetric: metric,
 	})
-	if err != nil {
-		return err
-	}
+	return err
+}
 
-	return nil
+func (r *ReportClient) ReportLocalMetricTick() {
+	ticker := time.NewTicker(5 * time.Minute)
+	for {
+		select {
+		case <-ticker.C:
+			ctx, _ := context.WithTimeout(context.Background(), time.Duration(200*time.Millisecond))
+			err := r.ReportLocalMetric(ctx, api.ReportOver())
+			if err != nil {
+				log.Log.Error().Msgf("ReportLocalMetricTick ReportLocalMetric Err:%s", err)
+			}
+		case <-r.Stop:
+			ticker.Stop()
+			return
+		}
+	}
 }
 
 // ServiceConfig ...
 type ServiceConfig struct {
-	Namespace    string        `yaml:"namespace" json:"namespace"`
-	Service      string        `yaml:"service" json:"service"`
-	SwitchConfig *SwitchConfig `yaml:"switch_config" json:"switch_config"`
-}
-
-// SwitchConfig force pass limit switch config
-type SwitchConfig struct {
-	ForceIgnore         bool  `yaml:"force_ignore" json:"force_ignore"`
-	OverSecondQpsIgnore int64 `yaml:"over_second_qps_ignore" json:"over_second_qps_ignore"`
-	OverMinuteQpsIgnore int64 `yaml:"over_minute_qps_ignore" json:"over_minute_qps_ignore"`
+	Namespace    string            `yaml:"namespace" json:"namespace"`
+	Service      string            `yaml:"service" json:"service"`
+	SwitchConfig *api.SwitchConfig `yaml:"switch_config" json:"switch_config"`
 }

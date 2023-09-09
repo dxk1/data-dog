@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	FuncMetricReport_InvokeMetricReport_FullMethodName = "/pb.FuncMetricReport/InvokeMetricReport"
+	FuncMetricReport_ReportLocalMetric_FullMethodName  = "/pb.FuncMetricReport/ReportLocalMetric"
 )
 
 // FuncMetricReportClient is the client API for FuncMetricReport service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FuncMetricReportClient interface {
 	InvokeMetricReport(ctx context.Context, in *InvokeMetricRequest, opts ...grpc.CallOption) (*Reply, error)
+	ReportLocalMetric(ctx context.Context, in *LocalMetricRequest, opts ...grpc.CallOption) (*Reply, error)
 }
 
 type funcMetricReportClient struct {
@@ -46,11 +48,21 @@ func (c *funcMetricReportClient) InvokeMetricReport(ctx context.Context, in *Inv
 	return out, nil
 }
 
+func (c *funcMetricReportClient) ReportLocalMetric(ctx context.Context, in *LocalMetricRequest, opts ...grpc.CallOption) (*Reply, error) {
+	out := new(Reply)
+	err := c.cc.Invoke(ctx, FuncMetricReport_ReportLocalMetric_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FuncMetricReportServer is the server API for FuncMetricReport service.
 // All implementations should embed UnimplementedFuncMetricReportServer
 // for forward compatibility
 type FuncMetricReportServer interface {
 	InvokeMetricReport(context.Context, *InvokeMetricRequest) (*Reply, error)
+	ReportLocalMetric(context.Context, *LocalMetricRequest) (*Reply, error)
 }
 
 // UnimplementedFuncMetricReportServer should be embedded to have forward compatible implementations.
@@ -59,6 +71,9 @@ type UnimplementedFuncMetricReportServer struct {
 
 func (UnimplementedFuncMetricReportServer) InvokeMetricReport(context.Context, *InvokeMetricRequest) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InvokeMetricReport not implemented")
+}
+func (UnimplementedFuncMetricReportServer) ReportLocalMetric(context.Context, *LocalMetricRequest) (*Reply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReportLocalMetric not implemented")
 }
 
 // UnsafeFuncMetricReportServer may be embedded to opt out of forward compatibility for this service.
@@ -90,6 +105,24 @@ func _FuncMetricReport_InvokeMetricReport_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FuncMetricReport_ReportLocalMetric_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LocalMetricRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FuncMetricReportServer).ReportLocalMetric(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FuncMetricReport_ReportLocalMetric_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FuncMetricReportServer).ReportLocalMetric(ctx, req.(*LocalMetricRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FuncMetricReport_ServiceDesc is the grpc.ServiceDesc for FuncMetricReport service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -100,6 +133,10 @@ var FuncMetricReport_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InvokeMetricReport",
 			Handler:    _FuncMetricReport_InvokeMetricReport_Handler,
+		},
+		{
+			MethodName: "ReportLocalMetric",
+			Handler:    _FuncMetricReport_ReportLocalMetric_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -28,6 +28,11 @@ message InvokeMetricRequest {
 
 }
 
+message LocalMetricRequest {
+  string second_over_metric = 1;
+  string local_ip = 2;
+}
+
 message Reply {
   int64 code = 1;
   string message = 2;
@@ -35,4 +40,7 @@ message Reply {
 
 service FuncMetricReport {
   rpc InvokeMetricReport(InvokeMetricRequest) returns (Reply);
+
+  rpc ReportLocalMetric(LocalMetricRequest) returns (Reply);
 }
+
