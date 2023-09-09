@@ -44,6 +44,8 @@ func (s *Server) Run() error {
 	if err != nil {
 		log.Log.Error().Msgf("gRpc server Serve returns error: %+v", err)
 	}
+
+	log.Log.Info().Msgf("server start %s", addr)
 	return err
 }
 

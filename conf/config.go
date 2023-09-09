@@ -17,6 +17,11 @@ import (
 // Global global config
 var Global *Config
 
+// RainBowConfig ...
+type RainBowConfig struct {
+	Conf *Config `yaml:"config"`
+}
+
 // Config is the startup config
 type Config struct {
 	ListenPort int `yaml:"listen_port"`
@@ -24,9 +29,10 @@ type Config struct {
 
 // Init init config
 func Init() (*Config, error) {
-	appID := os.Getenv("EB_SCHEDULER_APPID")
-	group := os.Getenv("EB_SCHEDULER_GROUP")
-	envName := os.Getenv("EB_SCHEDULER_ENV_NAME")
+	log.Init()
+	appID := os.Getenv("CONF_APPID")
+	group := os.Getenv("CONF_GROUP")
+	envName := os.Getenv("CONF_ENV_NAME")
 	if appID == "" || group == "" || envName == "" {
 		return nil, fmt.Errorf("config appID:%s, group:%s, envName:%s has empty value", appID, group, envName)
 	}
@@ -36,7 +42,7 @@ func Init() (*Config, error) {
 		Group:      group,
 		EnvName:    envName,
 	}
-	watcher, err := hotswap.NewRainBowOperator(opts, &Config{})
+	watcher, err := hotswap.NewRainBowOperator(opts, &RainBowConfig{})
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +51,7 @@ func Init() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	Global = preHandle(config.(*Config))
+	Global = preHandle(config.(*RainBowConfig).Conf)
 	return Global, nil
 }
 

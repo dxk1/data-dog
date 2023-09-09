@@ -34,4 +34,5 @@ func main() {
 		os.Exit(-1)
 	}
 
+	log.Log.Info().Msgf("server start success")
 }
