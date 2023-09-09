@@ -19,6 +19,7 @@ var Global *Config
 
 // Config is the startup config
 type Config struct {
+	ListenPort int `yaml:"listen_port"`
 }
 
 // Init init config
@@ -59,6 +60,10 @@ func (l *listener) OnEvent(data interface{}) {
 }
 
 func preHandle(config *Config) *Config {
+	if config.ListenPort == 0 {
+		config.ListenPort = 10000
+	}
+
 	out, _ := yaml.Marshal(config)
 	scflog.Infof("load conf:%s", string(out))
 	return config

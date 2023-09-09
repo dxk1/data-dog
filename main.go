@@ -6,8 +6,11 @@
 package main
 
 import (
+	"data-dog/conf"
 	"data-dog/log"
+	"data-dog/server"
 	"git.code.oa.com/tencentcloud-serverless/scf_common/recov"
+	"os"
 )
 
 func main() {
@@ -18,5 +21,17 @@ func main() {
 	})
 
 	//配置初始化
+	_, err := conf.Init()
+	if err != nil {
+		log.Log.Fatal().Msgf("conf.Init err:%s ", err)
+		os.Exit(-1)
+	}
+	//初始化server
+	ser := server.Init()
+	err = ser.Run()
+	if err != nil {
+		log.Log.Fatal().Msgf("server.Run err:%s ", err)
+		os.Exit(-1)
+	}
 
 }

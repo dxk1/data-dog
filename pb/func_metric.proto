@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = ".;pb";
+
+message InvokeMetricRequest {
+  string request_id = 1;
+  string app_id = 2;
+  string function_id = 3;
+  string namespace = 4;
+  string function_name = 5;
+  string qualifier = 6;
+
+  string runtime = 7;
+  string cur_quota = 8; //实时并发
+  string container_id = 9;
+  string status_code = 10;
+  string ret_code = 11;
+
+  bool cold_start = 12;
+  string worker_mgr_cost = 13;
+  string worker_cost = 14;
+  string duration = 15;
+  string event_type = 16;
+
+  string region = 17;
+
+}
+
+message Reply {
+  int64 code = 1;
+  string message = 2;
+}
+
+service FuncMetricReport {
+  rpc InvokeMetricReport(InvokeMetricRequest) returns (Reply);
+}
