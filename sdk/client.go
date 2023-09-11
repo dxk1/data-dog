@@ -10,6 +10,7 @@ import (
 	"data-dog/log"
 	"data-dog/pb"
 	"data-dog/sdk/api"
+	"fmt"
 	"git.code.oa.com/tencentcloud-serverless/scf_common/polarissdk"
 	"time"
 )
@@ -28,8 +29,8 @@ func Init(config *ServiceConfig, localIp string) *ReportClient {
 	}
 }
 
-func (r *ReportClient) ReportInvokeMetric(ctx context.Context, funId, t string, files map[string]string) error {
-	if api.CountingPass(funId, r.ServiceConfig.SwitchConfig) {
+func (r *ReportClient) ReportInvokeMetric(ctx context.Context, funId, ty string, files map[string]string) error {
+	if api.CountingPass(fmt.Sprintf("%s:%s", funId, ty), r.ServiceConfig.SwitchConfig) {
 		initReq := &polarissdk.GetOneInstanceRequest{}
 		initReq.Namespace = r.ServiceConfig.Namespace
 		initReq.Service = r.ServiceConfig.Service
