@@ -6,10 +6,10 @@
 package main
 
 import (
-	"data-dog/conf"
-	"data-dog/log"
-	"data-dog/server"
 	"git.code.oa.com/tencentcloud-serverless/scf_common/recov"
+	"github.com/dxk1/data-dog/conf"
+	"github.com/dxk1/data-dog/log"
+	"github.com/dxk1/data-dog/server"
 	"os"
 )
 

@@ -7,11 +7,11 @@ package sdk
 
 import (
 	"context"
-	"data-dog/log"
-	"data-dog/pb"
-	"data-dog/sdk/api"
 	"fmt"
 	"git.code.oa.com/tencentcloud-serverless/scf_common/polarissdk"
+	"github.com/dxk1/data-dog/log"
+	"github.com/dxk1/data-dog/pb"
+	"github.com/dxk1/data-dog/sdk/api"
 	"time"
 )
 

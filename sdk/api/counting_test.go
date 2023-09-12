@@ -6,7 +6,7 @@
 package api
 
 import (
-	"data-dog/log"
+	"github.com/dxk1/data-dog/log"
 	"sync/atomic"
 	"testing"
 	"time"

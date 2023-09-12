@@ -6,9 +6,9 @@
 package conf
 
 import (
-	"data-dog/log"
 	"fmt"
 	"git.code.oa.com/tencentcloud-serverless/scf_common/hotswap"
+	"github.com/dxk1/data-dog/log"
 	"gopkg.in/yaml.v3"
 	"os"
 	"sync"

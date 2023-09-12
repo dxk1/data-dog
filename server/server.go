@@ -7,10 +7,10 @@ package server
 
 import (
 	"context"
-	"data-dog/conf"
-	"data-dog/log"
-	"data-dog/pb"
 	"fmt"
+	"github.com/dxk1/data-dog/conf"
+	"github.com/dxk1/data-dog/log"
+	"github.com/dxk1/data-dog/pb"
 	"google.golang.org/grpc"
 	"net"
 )
